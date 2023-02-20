@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-
 use App\Models\Category;
-use DB;
-use Illuminate\Support\Facades\Redirect;
-use Image;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Intervention\Image\Facades\Image;
+
 
 class CategoryController extends Controller
 {
@@ -29,8 +27,8 @@ class CategoryController extends Controller
     {
         $request->validate([
             'name' => 'required|unique:categories,name|max:100',
-            'image' => 'mimes:jpeg,png,jpg,gif,webp',
-        ]);
+            'image' => 'required|mimes:jpeg,jpg,png,gif,webp|dimensions:width=200,height=200'
+        ],["image.dimensions" => "Image dimension must be (200px X 200px)"]);
         try {
             $category = new Category();
             if($request->hasFile('image')){
@@ -39,8 +37,7 @@ class CategoryController extends Controller
                 $imgExt = strtolower($image->getClientOriginalExtension());
                 $imgName = $nameGen. '.' . $imgExt;
                 $upLocation = 'uploads/category/';
-                // $image->move($upLocation, $imgName);
-                Image::make($image)->resize(768,768)->save($upLocation . $imgName);
+                Image::make($image)->resize(200,200)->save($upLocation . $imgName);
                 $lastImage = $upLocation . $imgName;
                 $category->image = $lastImage;
             }
@@ -80,8 +77,8 @@ class CategoryController extends Controller
     {
         $request->validate([
             'name' => 'required|max:100',
-            'image' => 'mimes:jpeg,png,jpg,gif,webp',
-        ]);
+            'image' => 'mimes:jpeg,jpg,png,gif,webp|dimensions:width=200,height=200'
+        ],["image.dimensions" => "Image dimension must be (200px X 200px)"]);
         
         try {
             $category = Category::findOrFail($id);
@@ -89,7 +86,7 @@ class CategoryController extends Controller
             $image = $request->file('image');
             if($image) {
                 $imageName = date('YmdHi').$image->getClientOriginalName();
-                Image::make($image)->resize(768,768)->save('uploads/category/' . $imageName);
+                Image::make($image)->resize(200,200)->save('uploads/category/' . $imageName);
                 if(file_exists($category->image) && !empty($category->image)) {
                     unlink($category->image);
                 }

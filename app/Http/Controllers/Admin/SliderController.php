@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Models\Slider;
 use Illuminate\Http\Request;
-use Image;
+use App\Http\Controllers\Controller;
+use Intervention\Image\Facades\Image;
 
 class SliderController extends Controller
 {
@@ -19,8 +19,8 @@ class SliderController extends Controller
             'slogan' => 'max:255',
             'headerline' => 'max:255',
             'description' => 'max:255',
-            'image' => 'required|mimes:jpg,png,bmp,jpeg,webp',
-        ]);
+            'image' => 'required|mimes:jpg,png,bmp,jpeg,webp|dimensions:width=1260,height=520',
+        ],["image.dimensions" => "Image dimension must be (1260px X 520px)"]);
         try {
             $slider = new Slider();
 
@@ -29,18 +29,15 @@ class SliderController extends Controller
             $imgExt = strtolower($image->getClientOriginalExtension());
             $imgName = $nameGen. '.' . $imgExt;
             $upLocation = 'uploads/slider/';
-            // $image->move($upLocation, $imgName);
-            Image::make($image)->resize(1920,1080)->save($upLocation . $imgName);
+            Image::make($image)->resize(1260,520)->save($upLocation . $imgName);
 
-            $slider->slogan = $request->slogan;
-            $slider->headerline = $request->headerline;
+            $slider->slogan      = $request->slogan;
+            $slider->headerline  = $request->headerline;
             $slider->description = $request->description;
-            $slider->image = $upLocation . $imgName;
-            // $slider->image = $this->imageUpload($request, 'image', 'uploads/slider') ?? '';
+            $slider->image       = $upLocation . $imgName;
             $slider->save();
             return redirect()->route('slider.index')->with('success', 'Insert Successful');
         } catch (\Throwable $th) {
-            // throw $th;
             return redirect()->back()->with('error', 'Insert Failed!');       
         }  
     }
@@ -59,8 +56,8 @@ class SliderController extends Controller
             'slogan' => 'max:255',
             'headerline' => 'max:255',
             'description' => 'max:255',
-            'image' => 'mimes:jpg,png,bmp,jpeg,webp',
-        ]);
+            'image' => 'mimes:jpg,png,bmp,jpeg,webp|dimensions:width=1260,height=520',
+        ],["image.dimensions" => "Image dimension must be (1260px X 520px)"]);
         // image upload
         try {
             $slider = Slider::find($id);
@@ -69,14 +66,12 @@ class SliderController extends Controller
                 if (!empty($slider->image) && file_exists($slider->image)) {
                     unlink($slider->image);
                 }
-                // $sliderImage = $this->imageUpload($request, 'image', 'uploads/slider');
                 $image = $request->file('image');
                 $nameGen = 'slide'.hexdec(uniqid());
                 $imgExt = strtolower($image->getClientOriginalExtension());
                 $imgName = $nameGen. '.' . $imgExt;
                 $upLocation = 'uploads/slider/';
-                // $image->move($upLocation, $imgName);
-                Image::make($image)->resize(1920,1080)->save($upLocation . $imgName);
+                Image::make($image)->resize(1260,520)->save($upLocation . $imgName);
                 $sliderImage = $upLocation . $imgName;
             } else{
                 $sliderImage = $slider->image;

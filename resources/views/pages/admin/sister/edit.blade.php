@@ -1,7 +1,7 @@
 @extends('layouts.admin-master', ['pageName'=> 'sister', 'title' => 'Edit Sister Concern'])
 {{-- @section('title', 'Update sister') --}}
 @push('admin-css')
-    <link href="{{ asset('summernote/summernote-bs4.min.css') }}" rel="stylesheet">  
+<link href="{{ asset('summernote/summernote-bs4.min.css') }}" rel="stylesheet">
 @endpush
 @section('admin-content')
 <main>
@@ -17,24 +17,29 @@
                                 <label for="name" class="mb-1"> Title <span class="text-danger">*</span> </label>
                                 <input type="text" name="name" class="form-control form-control-sm shadow-none @error('name') is-invalid @enderror" id="name" placeholder="Enter sister Name" value="{{ $sister->name }}">
                                 @error('name')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
                                 @enderror
-                                
+
                                 <label for="s_description" class="mb-1">Short Description</label>
-                                <textarea name="s_description" class="form-control form-control-sm" id="s_description" rows="3">{{ $sister->s_description }}</textarea>
+                                <textarea name="s_description" class="form-control form-control-sm @error('s_description') is-invalid @enderror" id="s_description" rows="3">{{ $sister->s_description }}</textarea>
                                 @error('s_description')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror                               
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                                @enderror
                             </div>
 
                             <div class="col-md-6 mb-2">
 
                                 <label for="image">Image</label>
-                                <input class="form-control form-control-sm" id="image" type="file" name="image" onchange="readImgURL(this);">
+                                <input class="form-control form-control-sm @error('image') is-invalid @enderror" id="image" type="file" name="image" onchange="readImgURL(this);">
+                                @error('image')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                                @enderror
                                 <div class="form-group mt-2" style="margin-bottom: 0">
                                     <img class="img-thumbnail" src="#" id="previewImage" style="width: 160px;height: 130px;">
                                 </div>
@@ -65,8 +70,8 @@
     function readImgURL(input) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
-            
-            reader.onload = function (e) {
+
+            reader.onload = function(e) {
                 $('#previewImage')
                     .attr('src', e.target.result)
                     .width(160)
@@ -76,6 +81,6 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
-    document.getElementById("previewImage").src="{{ asset($sister->image) }}";
+    document.getElementById("previewImage").src = "{{ asset($sister->image) }}";
 </script>
 @endpush

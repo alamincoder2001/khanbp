@@ -25,9 +25,12 @@ class CompanyProfileController extends Controller
             'email' => 'required|email',
             'phone' => 'required',
             'address' => 'required|string',
-            'logo' => 'mimes:jpg,jpeg,png,bmp',
-            'about_image' => 'mimes:jpg,jpeg,png,bmp',
+            'logo' => 'mimes:jpg,jpeg,png,bmp|dimensions:width=354,height=94',
+            'about_image' => 'mimes:jpg,jpeg,png,bmp|dimensions:width=1080,height=920',
             'bg_image' => 'mimes:jpg,jpeg,png,bmp',
+        ],[
+            "about_image.dimensions" => "Image dimension must be (1080px X 920px)",
+            "logo.dimensions" => "Image dimension must be (354px X 94px)"
         ]);
 
         // Image Update

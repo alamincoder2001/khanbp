@@ -22,8 +22,8 @@ class WhatweController extends Controller
         $request->validate([
             'description1' => 'required|min:10',
             'description2' => 'required|min:10',
-            'image' => 'mimes:jpg,jpeg,png,bmp'
-        ]);
+            'image' => 'mimes:jpeg,jpg,png,gif,webp|dimensions:width=540,height=520',
+        ],["image.dimensions" => "Image dimension must be (540px X 520px)"]);
         try {
             $image = $whatwe->image;
 

@@ -25,7 +25,7 @@
                                     <input type="text" name="name" value="{{ @$categoryData ? $categoryData->name : old('name')}}" class="form-control form-control-sm mb-2" id="name" placeholder="Enter Category name">
                                     @error('name') <span style="color: red">{{$message}}</span> @enderror
 
-                                    <label for="image"> Image <span style="font-size: 12px; font-weight: 400">(768px * 768px)</span></label>
+                                    <label for="image"> Image <span style="font-size: 12px; font-weight: 400">(200px * 200px)</span></label>
                                     <input type="file" name="image" value="{{ @$categoryData->image }}" class="form-control form-control-sm @error('image') is-invalid @enderror" id="image" onchange="mainThambUrl(this)">
                                     @error('image') <span style="color: red">{{$message}}</span> @enderror
                                 </div>

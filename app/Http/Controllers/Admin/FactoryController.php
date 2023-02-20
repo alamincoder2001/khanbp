@@ -6,22 +6,29 @@ use App\Models\Factory;
 use App\Models\FactoryPoint;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\File;
 
 class FactoryController extends Controller
 {
-    public function edit() {
+    public function edit()
+    {
         $factory = Factory::first();
         $factoryPoint = FactoryPoint::latest()->get();
-        return view('pages.admin.factory.factorys',compact('factory', 'factoryPoint'));
+        return view('pages.admin.factory.factorys', compact('factory', 'factoryPoint'));
     }
 
-    public function update(Request $request) {
+    public function update(Request $request, $id)
+    {
         $request->validate([
-            'image1' => 'mimes:jpg,jpeg,png,bmp,webp',
-            'image2' => 'mimes:jpg,jpeg,png,bmp,webp',
-            'image3' => 'mimes:jpg,jpeg,png,bmp,webp',
-            'image4' => 'mimes:jpg,jpeg,png,bmp,webp',
-            'title' => 'min:4|max:255'
+            'image1' => 'mimes:jpg,jpeg,png,bmp,webp|dimensions:width=354,height=224',
+            'image2' => 'mimes:jpg,jpeg,png,bmp,webp|dimensions:width=354,height=224',
+            'image3' => 'mimes:jpg,jpeg,png,bmp,webp|dimensions:width=354,height=224',
+            'image4' => 'mimes:jpg,jpeg,png,bmp,webp|dimensions:width=354,height=224',
+        ], [
+            "image1.dimensions" => "Image dimension must be (354px X 224px)",
+            "image2.dimensions" => "Image dimension must be (354px X 224px)",
+            "image3.dimensions" => "Image dimension must be (354px X 224px)",
+            "image4.dimensions" => "Image dimension must be (354px X 224px)",
         ]);
         try {
             $factory = Factory::first();
@@ -30,58 +37,51 @@ class FactoryController extends Controller
             $image3 = $factory->image3;
             $image4 = $factory->image4;
 
-            if($request->hasFile('image1')) {
-                if(!empty($factory->image1) && file_exists($factory->image1))
-                {
-                    unlink($factory->image1);
+            if ($request->hasFile('image1')) {
+                if (File::exists($image1)) {
+                    File::delete($image1);
                 }
-                $image1 = $this->imageUpload($request, 'image1', 'uploads/factory');
+                $factory->image1 = $this->imageUpload($request, 'image1', 'uploads/factory');
             }
-            if($request->hasFile('image2')) {
-                if(!empty($factory->image2) && file_exists($factory->image2))
-                {
-                    unlink($factory->image2);
+            if ($request->hasFile('image2')) {
+                if (File::exists($image2)) {
+                    File::delete($image2);
                 }
-                $image2 = $this->imageUpload($request, 'image2', 'uploads/factory');
+                $factory->image2 = $this->imageUpload($request, 'image2', 'uploads/factory');
             }
-            if($request->hasFile('image3')) {
-                if(!empty($factory->image3) && file_exists($factory->image3))
-                {
-                    unlink($factory->image3);
+            if ($request->hasFile('image3')) {
+                if (File::exists($image3)) {
+                    File::delete($image3);
                 }
-                $image3 = $this->imageUpload($request, 'image3', 'uploads/factory');
+                $factory->image3 = $this->imageUpload($request, 'image3', 'uploads/factory');
             }
-            if($request->hasFile('image4')) {
-                if(!empty($factory->image4) && file_exists($factory->image4))
-                {
-                    unlink($factory->image4);
+            if ($request->hasFile('image4')) {
+                if (File::exists($image4)) {
+                    File::delete($image4);
                 }
-                $image4 = $this->imageUpload($request, 'image4', 'uploads/factory');
+                $factory->image4 = $this->imageUpload($request, 'image4', 'uploads/factory');
             }
-            $factory->image1 = $image1;
-            $factory->image2 = $image2;
-            $factory->image3 = $image3;
-            $factory->image4 = $image4;
+
             $factory->save();
 
             $factorypoint = new FactoryPoint;
             $factorypoint->title = $request->title;
             $factorypoint->save();
 
-            if($factory){
-                return redirect()->back()->with('success', 'Update Successfull!');
-            }
+            return redirect()->back()->with('success', 'Update Successfull!');
+
         } catch (\Throwable $th) {
-            //throw $th;
             return redirect()->back()->withInput();
         }
     }
 
-    public function editpoint($id) {
+    public function editpoint($id)
+    {
         $factorypoint = FactoryPoint::find($id);
         return view('pages.admin.factory.factory-point', compact('factorypoint'));
     }
-    public function pointupdate(Request $request, $id) {
+    public function pointupdate(Request $request, $id)
+    {
         $request->validate([
             'title' => 'min:4|max:255'
         ]);
@@ -95,7 +95,8 @@ class FactoryController extends Controller
             //throw $th;
         }
     }
-    public function pointdelete($id) {
+    public function pointdelete($id)
+    {
         try {
             $factorypoint = FactoryPoint::find($id);
             $factorypoint->delete();
@@ -103,6 +104,5 @@ class FactoryController extends Controller
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', 'delete failed!');
         }
-       
     }
 }

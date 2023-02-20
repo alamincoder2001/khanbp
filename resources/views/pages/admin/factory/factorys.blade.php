@@ -11,7 +11,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-2">
                                 <label for="image1" class="">Image 1 <small>(Size: 354px * 224px)</small></label>
-                                <input class="form-control form-control-sm" id="image1" type="file" name="image1" onchange="readURL1(this);">
+                                <input class="form-control form-control-sm @error('image1') is-invalid @enderror" id="image1" type="file" name="image1" onchange="readURL1(this);">
                                 <div class="form-group my-2">
                                     <img class="form-controlo img-thumbnail" src="#" id="previewImage1" style="width: 160px;height: 130px;">
                                 </div>
@@ -21,7 +21,7 @@
                                 </span>
                                 @enderror
                                 <label for="image2" class="">Image 2 <small>(Size: 354px * 224px)</small></label>
-                                <input class="form-control form-control-sm" id="image2" type="file" name="image2" onchange="readURL2(this);">
+                                <input class="form-control form-control-sm @error('image2') is-invalid @enderror" id="image2" type="file" name="image2" onchange="readURL2(this);">
                                 <div class="form-group my-2">
                                     <img class="form-controlo img-thumbnail" src="#" id="previewImage2" style="width: 160px;height: 130px;">
                                 </div>
@@ -33,7 +33,7 @@
                             </div>
                             <div class="col-md-6 mb-2">
                                 <label for="image3" class="">Image 3 <small>(Size: 354px * 224px)</small></label>
-                                <input class="form-control form-control-sm" id="image3" type="file" name="image3" onchange="readURL3(this);">
+                                <input class="form-control form-control-sm @error('image3') is-invalid @enderror" id="image3" type="file" name="image3" onchange="readURL3(this);">
                                 <div class="form-group my-2">
                                     <img class="form-controlo img-thumbnail" src="#" id="previewImage3" style="width: 160px;height: 130px;">
                                 </div>
@@ -44,7 +44,7 @@
                                 @enderror
 
                                 <label for="image4" class="">Image 4 <small>(Size: 354px * 224px)</small></label>
-                                <input class="form-control form-control-sm" id="image4" type="file" name="image4" onchange="readURL4(this);">
+                                <input class="form-control form-control-sm @error('image4') is-invalid @enderror" id="image4" type="file" name="image4" onchange="readURL4(this);">
                                 <div class="form-group my-2">
                                     <img class="form-controlo img-thumbnail" src="#" id="previewImage4" style="width: 160px;height: 130px;">
                                 </div>

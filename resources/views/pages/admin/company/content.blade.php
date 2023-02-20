@@ -78,13 +78,23 @@
                                 @enderror
                                 
                                 <label for="about_image">About Image</label>
-                                <input class="form-control form-control-sm" id="about_image" type="file" name="about_image" onchange="readAboutURL(this);">
+                                <input class="form-control form-control-sm @error('about_image') is-invalid @enderror" id="about_image" type="file" name="about_image" onchange="readAboutURL(this);">
+                                @error('about_image')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
                                 <div class="form-group mt-2">
                                     <img class="form-controlo img-thumbnail" src="#" id="previewAboutImage" style="width: 160px;height: 130px;">
                                 </div>
 
                                 <label for="logo" class="mt-2">Company Logo</label>
-                                <input class="form-control form-control-sm" id="logo" type="file" name="logo" onchange="readURL(this);">
+                                <input class="form-control form-control-sm @error('logo') is-invalid @enderror" id="logo" type="file" name="logo" onchange="readURL(this);">
+                                @error('logo')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
                                 <div class="form-group my-2">
                                     <img class="form-controlo img-thumbnail" src="#" id="previewImage" style="width: 160px;height: 130px;">
                                 </div>

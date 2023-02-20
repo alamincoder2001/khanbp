@@ -1,13 +1,12 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
-use Illuminate\Support\Carbon;
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Event;
 use App\Models\Gallery;
-use DB;
-use Image;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Intervention\Image\Facades\Image;
 
 class GalleryController extends Controller
 {
@@ -19,8 +18,8 @@ class GalleryController extends Controller
     public function galleryInsert(Request $request) {
         $request->validate([
             'event_id' => 'required',
-            'image.*' => 'required|mimes:jpeg,jpg,png,gif,webp',
-        ]);
+            'image' => 'required|image|mimes:jpeg,jpg,png,gif,webp|dimensions:width=720,height=480'
+        ], ["image.dimensions" => "Image dimension must be (720px X 480px)"]);
         
         try {
             DB::beginTransaction();
@@ -73,7 +72,8 @@ class GalleryController extends Controller
     public function galleryUpdate(Request $request, $id) {
         $validatedData = $request->validate([
             'event_id' => 'required',
-        ]);
+            'image' => 'image|mimes:jpeg,jpg,png,gif,webp|dimensions:width=720,height=480'
+        ], ["image.dimensions" => "Image dimension must be (720px X 480px)"]);
         try {
             DB::beginTransaction();
             $gallery = Gallery::find($id);

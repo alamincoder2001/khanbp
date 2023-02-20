@@ -20,7 +20,7 @@
                                     </span>
                                 @enderror
 
-                                <label for="image" class="mt-1">Image</label>
+                                <label for="image" class="mt-1">Image <span>(Size: 600px * 500px)</span></label>
                                 <input class="form-control @error('image') is-invalid @enderror" id="image" type="file" name="image" onchange="readURL(this);">
                                 <img class="form-controlo img-thumbnail" src="#" id="previewImage" style="width: 150px;height: 100px; background: #3f4a49;">
                                 @error('image')

@@ -66,7 +66,7 @@
                                 @enderror
                             </div>
                             <div class="col-md-6 mb-2">
-                                <label for="image">Image <span class="text-danger">*</span> <small>(size: 700px * 800px)</small> </label>
+                                <label for="image">Image <span class="text-danger">*</span> <small>(size: 200px * 200px)</small> </label>
                                 <input class="form-control form-control-sm @error('image') is-invalid @enderror" id="image" type="file" name="image" onchange="readURL(this);">
                                 @error('image')
                                     <span class="invalid-feedback" role="alert">

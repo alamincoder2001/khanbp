@@ -2,22 +2,19 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\Unit;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\ProductModel;
-use App\Models\Unit;
-use Illuminate\Database\Eloquent\Model;
-// use App\Models\Subcategory;
-use Illuminate\Support\Facades\Redirect;
-use Image;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\File;
+use Intervention\Image\Facades\Image;
 
 class ProductController extends Controller
 {
     public function index()
     {
-        // $subcategory = Subcategory::latest()->get();
         $category = Category::latest()->get();
         $model = ProductModel::latest()->get();
         $unit = Unit::latest()->get();
@@ -34,20 +31,22 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'name' => 'required|max:100',
+            'name'        => 'required|max:100',
             'category_id' => 'required',
-            'model_id' => 'required',
-            'unit_id' => 'required',
-            'image' => 'required|image|mimes:jpeg,jpg,png,gif,webp',
+            'model_id'    => 'required',
+            'unit_id'     => 'required',
+            'image'       => 'required|image|mimes:jpeg,jpg,png,gif,webp|dimensions:width=720,height=720',
             'description' => 'min:8',
-            'rate' => 'required|numeric',
-        ]);
+            'rate'        => 'required|numeric',
+        ],["image.dimensions" => "Image dimension must be (720 X 720)"]);
         
         try {
             $image = $request->file('image');
             $name_gen=hexdec(uniqid()).'.'.$image->getClientOriginalExtension();
-            Image::make($image)->resize(720,720)->save('uploads/product/'.$name_gen);
+            Image::make($image)->resize(160,160)->save('uploads/product/'.$name_gen);
+            move_uploaded_file($_FILES['image']['tmp_name'], "uploads/product_thumb/".$name_gen);
             $save_url = 'uploads/product/'.$name_gen;
+            $save_url1 = 'uploads/product_thumb/'.$name_gen;
 
             $product = new Product();
             $product->name = $request->name;
@@ -57,6 +56,7 @@ class ProductController extends Controller
             $product->rate = $request->rate;
             $product->description = $request->description;
             $product->image = $save_url;
+            $product->image_thumb = $save_url1;
             $product->save();
             return Redirect()->route('admin.products')->with('success', 'Product Insertion Succeful!');
 
@@ -104,24 +104,33 @@ class ProductController extends Controller
     public function update(Request $request, $id)
     {
         $validatedData = $request->validate([
-            'name' => 'required|max:100',
-            'image' => 'image|mimes:jpeg,jpg,png,gif,webp',
+            'name'        => 'required|max:100',
+            'image'       => 'image|mimes:jpeg,jpg,png,gif,webp|dimensions:width=720,height=720',
             'description' => 'min:8',
             'category_id' => 'required',
-            'model_id' => 'required',
-            'unit_id' => 'required',
-            'rate' => 'required|numeric',
-        ]);
+            'model_id'    => 'required',
+            'unit_id'     => 'required',
+            'rate'        => 'required|numeric',
+        ],["image.dimensions" => "Image dimension must be (720 X 720)"]);
         try {
-            $old_img = $request->old_image;
-            if ($request->file('image')) {
-                unlink($old_img);
+            $product = Product::find($id);
+            $old_img = $product->image;
+            $old_img1 = $product->image_thumb;
+            if ($request->hasFile('image')) {
+                if (File::exists($old_img)) {
+                    File::delete($old_img);
+                }
+                if (File::exists($old_img1)) {
+                    File::delete($old_img1);
+                }
+
                 $image = $request->file('image');
                 $name_gen=hexdec(uniqid()).'.'.$image->getClientOriginalExtension();
-                Image::make($image)->resize(720,720)->save('uploads/product/'.$name_gen);
+                Image::make($image)->resize(160,160)->save('uploads/product/'.$name_gen);
+                move_uploaded_file($_FILES['image']['tmp_name'], "uploads/product_thumb/".$name_gen);
                 $save_url = 'uploads/product/'.$name_gen;
+                $save_url1 = 'uploads/product_thumb/'.$name_gen;
     
-                $product = Product::find($id);
                 $product->name = $request->name;
                 $product->category_id = $request->category_id;
                 $product->model_id = $request->model_id;
@@ -129,9 +138,9 @@ class ProductController extends Controller
                 $product->rate = $request->rate;
                 $product->description = $request->description;
                 $product->image = $save_url;
+                $product->image_thumb = $save_url1;
                 $product->save();
             } else {
-                $product = Product::find($id);
                 $product->name = $request->name;
                 $product->category_id = $request->category_id;
                 $product->model_id = $request->model_id;

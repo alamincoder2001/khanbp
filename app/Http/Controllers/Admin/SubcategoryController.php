@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Models\Category;
 use App\Models\Subcategory;
-use Image;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Intervention\Image\Facades\Image;
 
 class SubcategoryController extends Controller
 {
@@ -20,11 +19,11 @@ class SubcategoryController extends Controller
 
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
+        $request->validate([
             'category_id' => 'required',
             'name' => 'required|unique:subcategories,name|max:100',
-            'image' => 'required|mimes:jpeg,jpg,png,gif,webp'
-        ]);
+            'image' => 'required|mimes:jpeg,jpg,png,gif,webp|dimensions:width=200,height=200'
+        ],["image.dimensions" => "Image dimension must be (200px X 200px)"]);
         
         try {
             $subcategory = new Subcategory();
@@ -33,7 +32,7 @@ class SubcategoryController extends Controller
             $image = $request->file('image');
             if($image) {
                 $imageName = date('YmdHi').$image->getClientOriginalName();
-                Image::make($image)->resize(768,768)->save('uploads/subcategory/' . $imageName);
+                Image::make($image)->resize(200,200)->save('uploads/subcategory/' . $imageName);
                 $subcategory['image'] = $imageName;
             }
             $subcategory->save();
@@ -67,17 +66,18 @@ class SubcategoryController extends Controller
         $validatedData = $request->validate([
             'category_id' => 'required',
             'name' => 'required|max:100',
-        ]);
+            'image' => 'mimes:jpeg,jpg,png,gif,webp|dimensions:width=200,height=200'
+        ],["image.dimensions" => "Image dimension must be (200px X 200px)"]);
         
         try {
-            $subcategory = Subcategory::findOrFail($id);
+            $subcategory              = Subcategory::findOrFail($id);
             $subcategory->category_id = $request->category_id;
-            $subcategory->name = $request->name;
+            $subcategory->name        = $request->name;
             
             $image = $request->file('image');
             if($image) {
                 $imageName = date('YmdHi').$image->getClientOriginalName();
-                Image::make($image)->resize(768,768)->save('uploads/subcategory/' . $imageName);
+                Image::make($image)->resize(200,200)->save('uploads/subcategory/' . $imageName);
                 if(file_exists('uploads/subcategory/'. $subcategory->image) && !empty($subcategory->image)) {
                     unlink('uploads/subcategory/' . $subcategory->image);
                 }

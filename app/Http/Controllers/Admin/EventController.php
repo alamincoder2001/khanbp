@@ -5,8 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Event;
-use PHPUnit\Framework\Constraint\FileExists;
-
 use function PHPUnit\Framework\fileExists;
 use Intervention\Image\Facades\Image;
 
@@ -21,11 +19,10 @@ class EventController extends Controller
     {
         $request->validate([
             'name' => 'required|unique:events|max:100',
-            'image' => 'required|image|mimes:jpeg,jpg,png,gif,webp'
-        ]);
+            'image' => 'required|image|mimes:jpeg,jpg,png,gif,webp|dimensions:width=720,height=480'
+        ], ["image.dimensions" => "Image dimension must be (720px X 480px)"]);
         try {
-            $image = $request->file('image');
-           
+            $image = $request->file('image');           
             $imageName = hexdec(uniqid()).$image->getClientOriginalName();
             $lastImage = 'uploads/event/'.$imageName;
             Image::make($image)->resize(720,480)->save('uploads/event/'.$imageName);
@@ -35,7 +32,6 @@ class EventController extends Controller
             $event->save();
             return Redirect()->back()->with('success', 'Insertion Successful!');
         } catch (\Exception $e) {
-            // throw $e;
             return Redirect()->back()->with('error', 'Insert Failed!');
         }
     }
@@ -49,8 +45,8 @@ class EventController extends Controller
     {
         $request->validate([
             'name' => 'required|max:100',
-            'image' => 'image|mimes:jpeg,jpg,png,gif,webp'
-        ]);
+            'image' => 'image|mimes:jpeg,jpg,png,gif,webp|dimensions:width=720,height=480'
+        ], ["image.dimensions" => "Image dimension must be (720px X 480px)"]);
         
         try {
             $event = Event::find($id);
@@ -70,7 +66,6 @@ class EventController extends Controller
             return Redirect()->route('admin.event')->with('success', 'Update Successful!');
 
         } catch (\Exception $e) {
-            // throw $e
             return Redirect()->back()->with('error', 'Update Failed!');
         }
     }
@@ -84,7 +79,6 @@ class EventController extends Controller
             $event->delete();
             return Redirect()->back()->with('success', 'Deleted Successfully!');
         } catch (\Throwable $th) {
-            // throw $th;
             return Redirect()->back()->with('error', 'Deleted Failed!');
         }
         

@@ -30,8 +30,8 @@ class ManagementController extends Controller
             'facebook' => 'max:100',
             'twitter' => 'max:100',
             'instagram' => 'max:100',
-            'image' => 'required|Image|mimes:jpeg,jpg,png,gif',
-        ]);
+            'image' => 'required|mimes:jpeg,jpg,png,gif|dimensions:width=200,height=200'
+        ], ["image.dimensions" => "Image dimension must be (200px X 200px)"]);
         
         $image = $request->file('image');
         $nameGen = hexdec(uniqid());
@@ -85,8 +85,8 @@ class ManagementController extends Controller
             'facebook' => 'max:100',
             'twitter' => 'max:100',
             'instagram' => 'max:100',
-            'image' => 'Image|mimes:jpeg,jpg,png,gif',
-        ]);
+            'image' => 'mimes:jpeg,jpg,png,gif|dimensions:width=200,height=200'
+        ], ["image.dimensions" => "Image dimension must be (200px X 200px)"]);
 
         try {
             $management = Management::findOrFail($id);

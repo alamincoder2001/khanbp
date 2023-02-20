@@ -24,8 +24,13 @@
                                     </span>
                                 @enderror
 
-                                <label for="image" class="">History & Activity Section Photo (size 540*528)</label>
-                                <input class="form-control form-control-sm" id="image" type="file" name="image" onchange="readURL(this);">
+                                <label for="image" class="">History & Activity Section Photo (size 540*520)</label>
+                                <input class="form-control form-control-sm @error('image') is-invalid @enderror" id="image" type="file" name="image" onchange="readURL(this);">
+                                @error('image')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
                                 <div class="form-group my-2">
                                     <img class="form-controlo img-thumbnail" src="#" id="previewImage" style="width: 160px;height: 130px;">
                                 </div>

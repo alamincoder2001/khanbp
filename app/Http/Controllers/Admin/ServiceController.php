@@ -1,12 +1,11 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Carbon;
-use Illuminate\Http\Request;
 use App\Models\Service;
-use Illuminate\Support\Facades\DB;
-use Image;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use App\Http\Controllers\Controller;
+use Intervention\Image\Facades\Image;
 
 class ServiceController extends Controller
 {
@@ -18,8 +17,8 @@ class ServiceController extends Controller
         $request->validate([
             'name' => 'required|min:4|max:255',
             's_description' => 'required|min:4|max:255',
-            'image' => 'required|image|mimes:jpeg,jpg,png,gif,webp'
-        ]);
+            'image' => 'required|Image|mimes:jpeg,jpg,png,gif,webp|dimensions:width=440,height=360',
+        ],["image.dimensions" => "Image dimension must be (440px X 360px)"]);
 
         try {
             $image = $request->file('image');
@@ -30,7 +29,6 @@ class ServiceController extends Controller
             
             $service = new Service;
             $service->name = $request->name;
-            // $service->description = $request->description;
             $service->s_description = $request->s_description;
             $service->image = $save_url;    
             $service->created_at = Carbon::now();
@@ -49,8 +47,8 @@ class ServiceController extends Controller
         $request->validate([
             'name' => 'required',
             's_description' => 'required|min:8|max:255',
-            'image' => 'image|mimes:jpeg,jpg,png,gif,webp'
-        ]);
+            'image' => 'mimes:jpeg,jpg,png,gif,webp|dimensions:width=440,height=360',
+        ],["image.dimensions" => "Image dimension must be (440px X 360px)"]);
 
         try {
             $service = Service::find($id);

@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Image;
 use Illuminate\Http\Request;
 use App\Models\SisterConcern;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Intervention\Image\Facades\Image;
 
 class SisterConcernController extends Controller
 {
@@ -19,8 +18,8 @@ class SisterConcernController extends Controller
         $request->validate([
             'name' => 'required|min:4|max:255',
             's_description' => 'required|min:4|max:255',
-            'image' => 'required|image|mimes:jpeg,jpg,png,gif,webp'
-        ]);
+            'image' => 'required|mimes:jpeg,jpg,png,gif,webp|dimensions:width=440,height=360',
+        ],["image.dimensions" => "Image dimension must be (440px X 360px)"]);
 
         try {
             $image = $request->file('image');
@@ -49,8 +48,8 @@ class SisterConcernController extends Controller
         $request->validate([
             'name' => 'required',
             's_description' => 'required|min:8',
-            'image' => 'image|mimes:jpeg,jpg,png,gif,webp'
-        ]);
+            'image' => 'mimes:jpeg,jpg,png,gif,webp|dimensions:width=440,height=360',
+        ],["image.dimensions" => "Image dimension must be (440px X 360px)"]);
 
         try {
             $sisterconcern = SisterConcern::find($id);

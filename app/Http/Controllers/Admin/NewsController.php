@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Models\News;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use App\Models\News;
-use Image;
+use App\Http\Controllers\Controller;
+use Intervention\Image\Facades\Image;
 
 class NewsController extends Controller
 {
@@ -15,18 +15,16 @@ class NewsController extends Controller
         return view('pages.admin.news.index', compact('news'));
     }
     public function store(Request $request) {
-        // return $request;
         $request->validate([
             'title' => 'required|min:4',
             'description' => 'required|min:10',
-            'image' => 'required|Image|mimes:jpeg,jpg,png,gif,webp',
-        ]);
+            'image' => 'required|Image|mimes:jpeg,jpg,png,gif,webp|dimensions:width=600,height=500',
+        ],["image.dimensions" => "Image dimension must be (600px X 500px)"]);
         $image = $request->file('image');
         $nameGen = hexdec(uniqid());
         $imgExt = strtolower($image->getClientOriginalExtension());
         $imgName = $nameGen. '.' . $imgExt;
         $upLocation = 'uploads/news/';
-        // $image->move($upLocation, $imgName);
         Image::make($image)->resize(600,500)->save($upLocation . $imgName);
 
         try {
@@ -37,8 +35,7 @@ class NewsController extends Controller
             $news->created_at = Carbon::now();
             $news->save();
             return redirect()->back()->with('success', 'News Insertion Successfull!');
-        } catch (\Exception $e) {        
-		    // return ["error" => $e->getMessage()];
+        } catch (\Exception $e) {
             return Redirect()->back()->with('error', 'News Insertion Failed!');
         }
     }
@@ -51,8 +48,8 @@ class NewsController extends Controller
         $request->validate([
             'title' => 'required|min:4',
             'description' => 'required|min:10',
-            'image' => 'Image|mimes:jpeg,jpg,png,gif,webp'
-        ]);
+            'image' => 'Image|mimes:jpeg,jpg,png,gif,webp|dimensions:width=600,height=500',
+        ],["image.dimensions" => "Image dimension must be (600px X 500px)"]);
 
         try {
             $news = News::find($id);

@@ -27,7 +27,7 @@
             <div class="swiper-wrapper align-items-center">
 
               <div class="swiper-slide">
-                <img src="{{ asset($product->image) }}" alt="">
+                <img src="{{ asset($product->image_thumb) }}" alt="">
               </div>
             </div>
 

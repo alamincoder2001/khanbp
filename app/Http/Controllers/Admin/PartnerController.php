@@ -20,8 +20,8 @@ class PartnerController extends Controller
         // dd($request->all());
         $request->validate([
             'name' => 'required|string|min:3',
-            'image' => 'required|mimes:jpg,png,bmp,jpeg',
-        ]);
+            'image' => 'required|mimes:jpg,png,bmp,jpeg|dimensions:width=86,height=100',
+        ],["image.dimensions" => "Image dimension must be (86px X 100px)"]);
 
         $partner = new Partner();
         $partner->name = $request->name;
@@ -44,15 +44,15 @@ class PartnerController extends Controller
     {
         $request->validate([
             'name' => 'required|string|min:3',
-            'image' => 'mimes:jpg,png,bmp,jpeg',
-        ]);
+            'image' => 'mimes:jpg,png,bmp,jpeg|dimensions:width=86,height=100',
+        ],["image.dimensions" => "Image dimension must be (86px X 100px)"]);
         // image upload
         $partnerImage = '';
         if ($request->hasFile('image')) {
             if (!empty($partner->image) && file_exists($partner->image)) {
                 unlink($partner->image);
             }
-            $partnerImage = $this->imageUpload($request, 'image', 'uploads/service');
+            $partnerImage = $this->imageUpload($request, 'image', 'uploads/partner');
         }else{
             $partnerImage = $partner->image;
         }
@@ -62,7 +62,7 @@ class PartnerController extends Controller
         $partner->save();
         if($partner)
         {
-            return redirect()->route('partner.index');
+            return redirect()->route('partner.index')->with('success', 'Update Success');
         }
         return redirect()->back()->withInput()->with('success', 'Update Success');
     }
